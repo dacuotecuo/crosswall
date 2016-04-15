@@ -15,7 +15,7 @@ net.createServer(client => {
        buffer = buffer_add(buffer, data);
        if (buffer_find_body(buffer) == -1) return;
        console.log( 'data come', buffer.toString());
-       var req = parse_request(buffer);
+       let req = parse_request(buffer);
        if (req === false) return;
        client.removeAllListeners('data');
        relay_connection(req);
@@ -54,6 +54,7 @@ net.createServer(client => {
            server.write(buffer);
    }
 }).listen(local_port);
+
 console.log('Proxy server running at localhost:' + local_port);
 //处理各种错误
 process.on('uncaughtException', function(err){
@@ -87,9 +88,12 @@ function parse_request (buffer) {
    return false;
 }
 
-/*
-* 两个buffer对象加起来
-*/
+/**
+ * [buffer_add description]
+ * @param  {[type]} buf1 [description]
+ * @param  {[type]} buf2 [description]
+ * @return {[type]}      [description]
+ */
 function buffer_add (buf1, buf2) {
    var re = new Buffer(buf1.length + buf2.length);
    buf1.copy(re);
