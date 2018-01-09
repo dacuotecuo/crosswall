@@ -11,7 +11,10 @@ let client_socket = null;
 let proxy_socket = null;
 
 const client = net.createServer(socket => {
+
     client_socket = socket;
+
+    console.log(socket.remoteAddress);
 
     socket.on('close', function () {
         console.log('client closed with client server, port: 8082');

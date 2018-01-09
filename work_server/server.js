@@ -9,11 +9,19 @@ const socket = new Socket({
 });
 socket.connect({
     port: 8082
+}, function () {
+    console.log(arguments);
+});
+
+socket.on('error', function (error) {
+    console.log('some error happens to the server socket', error);
 });
 
 socket.on('data', data => {
 
-    console.log('server receive request', data.toString('utf8'));
+    console.log(`START================================================================================================\r\n`, 
+        data.toString('utf8'), 
+        `\r\n================================================================================================END\r\n`);
 
     const req = parse_request(data);
     if (!req) return;
@@ -38,15 +46,23 @@ socket.on('data', data => {
     //建立到目标服务器的连接
     let server = net.createConnection(req.port, req.host);
 
+    server.on('error', function (error) {
+        console.log('error with the server', error);
+        socket.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
+    });
+
     server.on("data", function (response) {
         socket.write(response);
-        console.log('send data', response.toString('utf8'));
+        data.toString('utf8'),
+        console.log('send data:\r\n',
+
+        response.toString('utf8'));
     });
 
     if (req.method == 'CONNECT')
         socket.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
     else
-        server.write(buffer);
+        server.write(data);
 });
 
 /**
@@ -91,10 +107,8 @@ function buffer_add (buf1, buf2) {
     buf1.copy(re);
     buf2.copy(re, buf1.length);
     return re;
- }
- 
+}
 
- 
 /*
 * 从缓存中找到头部结束标记(“\r\n\r\n”)的位置
 */

@@ -1,6 +1,11 @@
 'use strict';
 
 const { Socket } = require('net');
+const request = require('request');
+
+request({
+    
+})
 
 const socket = new Socket({
     readable: true,
