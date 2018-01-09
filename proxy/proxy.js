@@ -8,17 +8,7 @@
 const net = require('net');
 
 let client_socket = null;
-
-const proxy = net.createServer(socket => {
-    console.log('come proxy connect');
-    socket.on('data', data => {
-        console.log('receive data', data.toString('utf8'));
-        client_socket.write(data);
-    });
-    socket.on('close', function (err) {
-        console.log('client closed with proxy, port: 8081', err);
-    });
-});
+let proxy_socket = null;
 
 const client = net.createServer(socket => {
     client_socket = socket;
@@ -26,8 +16,27 @@ const client = net.createServer(socket => {
     socket.on('close', function () {
         console.log('client closed with client server, port: 8082');
     });
+
+    socket.on('data', data => {
+        console.log('client socket receive data', data.toString('utf8'));
+        proxy_socket.write(data);
+    });
 });
 
+
+const proxy = net.createServer(socket => {
+    proxy_socket = socket;
+    console.log('come proxy connect');
+    socket.on('data', data => {
+        console.log('proxy socket receive data', data.toString('utf8'));
+        client_socket.write(data);
+    });
+    socket.on('close', function (err) {
+        console.log('client closed with proxy, port: 8081', err);
+    });
+
+    
+});
 
 proxy.listen(8081, () => {
     console.log('proxy server listening 8081 ');
@@ -45,7 +54,6 @@ client.on('error', function (err) {
 });
 
 //处理各种错误
-process.on('uncaughtException', function (err) {
-    console.log('\nError!!!', arguments);
-    console.log(err);
- });
+process.on('uncaughtException', err => {
+    console.log('uncaughtException=', err);
+});

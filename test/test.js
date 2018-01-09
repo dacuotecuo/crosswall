@@ -10,4 +10,4 @@ socket.connect({
     port: 8081
 });
 
-socket.write(new Buffer('asdasds'));
+socket.write(new Buffer('asdasds \n'));
