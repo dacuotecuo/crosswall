@@ -1,0 +1,25 @@
+{
+  "name": "crosswall",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dacuotecuo/crosswall.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dacuotecuo/crosswall/issues"
+  },
+  "homepage": "https://github.com/dacuotecuo/crosswall#readme",
+  "dependencies": {
+    "request": "2.83.0"
+  }
+}

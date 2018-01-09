@@ -1,7 +1,7 @@
 'use strict'
 const net   = require('net')
     , fs    = require('fs')
-    , port  = app.get('port')
+    , port  = 8080
 
 /**
  * [description]
@@ -11,10 +11,10 @@ const net   = require('net')
 net.createServer(client => {
     
    let buffer = new Buffer(0);
-   client.on('data',data => {
+   client.on('data', data => {
        buffer = buffer_add(buffer, data);
        if (buffer_find_body(buffer) == -1) return;
-       console.log( 'data come', buffer.toString());
+       console.log('data come', buffer.toString());
        let req = parse_request(buffer);
        if (req === false) return;
        client.removeAllListeners('data');
@@ -44,18 +44,16 @@ net.createServer(client => {
        //建立到目标服务器的连接
        let server = net.createConnection(req.port,req.host);
        //交换服务器与浏览器的数据
-       client.on("data", function(data){ server.write(data); });
-       server.on("data", function(data){ client.write(data); fs.appendFile('test.html', data, function (err) {
-          if (!err) console.log(err);
-       }); });
-       if (req.method == 'CONNECT')
-           client.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
-       else
+        client.on("data", function(data){ server.write(data); });
+        server.on("data", function(data){ client.write(data); });
+        if (req.method == 'CONNECT')
+            client.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
+        else
            server.write(buffer);
    }
-}).listen(local_port);
+}).listen(port);
 
-console.log('Proxy server running at localhost:' + local_port);
+console.log('Proxy server running at localhost:' + port);
 //处理各种错误
 process.on('uncaughtException', function(err){
    console.log('\nError!!!');
