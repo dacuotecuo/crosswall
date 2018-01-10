@@ -25,6 +25,7 @@ socket.on('data', data => {
     console.log('data come', buffer.toString());
     let request = parse_request(buffer);
     if (request === false) return;
+    //此处未能处理多个请求和续接的问题
     socket.removeAllListeners('data');
     relay_connection(request);
 
