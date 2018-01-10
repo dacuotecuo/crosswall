@@ -15,6 +15,9 @@ const client = net.createServer(socket => {
     client_socket = socket;
 
     console.log(socket.remoteAddress);
+    socket.once('data', data => {
+        console.log('data', data);
+    })
 });
 
 
@@ -22,7 +25,7 @@ const proxy = net.createServer(socket => {
     proxy_socket = socket;
     console.log('come proxy connect');
     let buffer = new Buffer(0);
-    socket.on('data', data => {
+    socket.once('data', data => {
 
         console.log('proxy socket receive data', data.toString('utf8'));
         buffer = buffer_add(buffer, data);

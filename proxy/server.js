@@ -17,7 +17,11 @@ socket.on('error', function (error) {
     console.log('some error happens to the server socket', error);
 });
 
+socket.write('asdasd');
+
 let buffer = new Buffer(0);
+
+
 
 socket.on('data', data => {
     buffer = buffer_add(buffer, data);
