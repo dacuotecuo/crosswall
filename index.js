@@ -44,14 +44,8 @@ net.createServer(client => {
        //建立到目标服务器的连接
        let server = net.createConnection(req.port, req.host);
        //交换服务器与浏览器的数据
-        client.on("data", function (data) { 
-            console.log('receive data from client,', data.toString('utf8'));
-            server.write(data); 
-        });
-        server.on("data", function(data){ 
-            console.log('server receive data,', data.toString('utf8'));
-            client.write(data); 
-        });
+        client.on("data", function(data){ server.write(data); });
+        server.on("data", function(data){ client.write(data); });
         if (req.method == 'CONNECT')
             client.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
         else

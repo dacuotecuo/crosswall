@@ -8,7 +8,8 @@ const socket = new Socket({
     writable: true
 });
 socket.connect({
-    port: 8082
+    host: "182.18.22.81",
+    port: 6666
 }, function () {
     console.log(arguments);
 });
