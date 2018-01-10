@@ -23,7 +23,7 @@ net.createServer(client => {
 
    //从http请求头部取得请求信息后，继续监听浏览器发送数据，同时连接目标服务器，并把目标服务器的数据传给浏览器
    function relay_connection(req) {
-       console.log(req.method + ' ' + req.host+ ':' +req.port);
+       console.log(req.method + ' ' + req.host + ':' + req.port);
        //如果请求不是CONNECT方法（GET, POST），那么替换掉头部的一些东西
        if (req.method != 'CONNECT') {
            //先从buffer中取出头部

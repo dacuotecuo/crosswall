@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/dacuotecuo/crosswall#readme",
   "dependencies": {
-    "request": "2.83.0",
-    "winston": "2.4.0"
+    "@taf/taf-logs": "0.1.1"
   }
 }

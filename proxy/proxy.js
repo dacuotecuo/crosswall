@@ -38,8 +38,6 @@ const proxy = net.createServer(socket => {
     socket.on('close', function (err) {
         console.log('client closed with proxy, port: 8081', err);
     });
-
-    
 });
 
 proxy.listen(8081, () => {
