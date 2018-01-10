@@ -10,6 +10,10 @@ net.createServer(function (c) {
 
     client = c;
 
+    c.on('error', function (error) {
+        console.log('client error', error);
+    });
+
 }).listen(6666);
 
 net.createServer(function (s) {
@@ -22,4 +26,7 @@ net.createServer(function (s) {
 
     server = s;
 
+    s.on('error', function (error) {
+        console.log('server error', error);
+    });
 }).listen(7777);

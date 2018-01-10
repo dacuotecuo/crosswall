@@ -29,7 +29,10 @@ socket.on('data', chunk => {
             socket.write('end');
         });
     });
+});
 
+socket.on('error', function (error) {
+    console.log('error', error)
 });
 
 /**
