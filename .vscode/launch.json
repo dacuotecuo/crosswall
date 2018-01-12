@@ -8,8 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\proxy\\test.js"
-            // "program": "${workspaceFolder}\\index.js"
+            // "program": "${workspaceFolder}\\proxy\\test.js"
+            "program": "${workspaceFolder}\\tunnel\\work.js"
         }
     ]
 }

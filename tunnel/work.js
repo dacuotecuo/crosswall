@@ -1,7 +1,10 @@
 const net = require('net');
-const socket = new net.Socket();
+let socket = new net.Socket({
+    
+});
 
 socket.connect({
+    host: '127.0.0.1',
     port: 7777
 }, function () {
     console.log('socket connect suc');
@@ -9,7 +12,8 @@ socket.connect({
 
 socket.on('data', chunk => {
 
-    var url = /[A-Z]+\s+([^\s]+)\s+HTTP/.exec(chunk)
+    console.log(chunk.toString());
+    var url = /[A-Z]+\s+([^\s]+)\s+HTTP/.exec(chunk);
     if (!url || url.length < 2) return;
 
     url = url[1];
@@ -26,7 +30,7 @@ socket.on('data', chunk => {
         serverSocket.write(chunk);
         serverSocket.pipe(socket);
         serverSocket.on('end', function() {
-            socket.write('end');
+            socket.end();
         });
     });
 });

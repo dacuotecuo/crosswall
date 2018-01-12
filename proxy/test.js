@@ -1,37 +1,23 @@
-// 'use strict';
-
-// const { Socket } = require('net');
-// const request = require('request');
-
-// request({
-    
-// })
-
-// const socket = new Socket({
-//     readable: true,
-//     writable: true
-// });
-// socket.connect({
-//     port: 8081
-// });
-
-// socket.write(new Buffer('asdasds \n'));
-
 const net = require('net');
+const proxy = {
+    port: 20057,
+    host: '127.0.0.1'
+};
 
 net.createServer(function (clientSocket) {
     
     clientSocket.once('data', function (firstChunk) {
+
+        // console.log(firstChunk.toString('utf8'));
+
         // 解析http协议头, 分析出请求的url
         var url = /[A-Z]+\s+([^\s]+)\s+HTTP/.exec(firstChunk)[1];
         if (url.indexOf('//') === -1) {
             // https协议交给pac脚本会得到错误的端口.
             url = 'http://' + url;
-        }
-        // 这个异步调用是在使用pac脚本计算应该使用哪个代理.
-        const proxy = getProxyHostAndPort(url);
+        }        
 
-        var serverSocket = net.connect(proxy.port, proxy.host, function() {
+        var serverSocket = net.connect(proxy.port, proxy.host, function () {
             clientSocket.pipe(serverSocket);
             serverSocket.write(firstChunk);
             serverSocket.pipe(clientSocket);
@@ -43,10 +29,6 @@ net.createServer(function (clientSocket) {
     });
 }).listen(8088);
 
-
-function getProxyHostAndPort () {
-    return {
-        host: '127.0.0.1',
-        port: 20057
-    }
-}
+process.on('uncaughtException', function (error) {
+    console.log('error', error);
+});
