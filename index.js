@@ -23,7 +23,7 @@ net.createServer(client => {
 
    //从http请求头部取得请求信息后，继续监听浏览器发送数据，同时连接目标服务器，并把目标服务器的数据传给浏览器
    function relay_connection(req) {
-       console.log(req.method + ' ' + req.host+ ':' +req.port);
+       console.log(req.method + ' ' + req.host + ':' + req.port);
        //如果请求不是CONNECT方法（GET, POST），那么替换掉头部的一些东西
        if (req.method != 'CONNECT') {
            //先从buffer中取出头部
@@ -39,19 +39,13 @@ net.createServer(client => {
                let url = req.path.replace(/http:\/\/[^\/]+/, '');
                if (url.path != url) header = header.replace(req.path,url);
            }
-           buffer = buffer_add(new Buffer(header,'utf8'),buffer.slice(_body_pos));
+           buffer = buffer_add(new Buffer(header,'utf8'), buffer.slice(_body_pos));
        }
        //建立到目标服务器的连接
        let server = net.createConnection(req.port, req.host);
        //交换服务器与浏览器的数据
-        client.on("data", function (data) { 
-            console.log('receive data from client,', data.toString('utf8'));
-            server.write(data); 
-        });
-        server.on("data", function(data){ 
-            console.log('server receive data,', data.toString('utf8'));
-            client.write(data); 
-        });
+        client.on("data", function(data) { server.write(data); });
+        server.on("data", function(data) { client.write(data); });
         if (req.method == 'CONNECT')
             client.write(new Buffer('HTTP/1.1 200 Connection established\r\nConnection: close\r\n\r\n'));
         else
@@ -68,29 +62,32 @@ process.on('uncaughtException', function(err){
 
 
 /**
-* 从请求头部取得请求详细信息
-* 如果是 CONNECT 方法，那么会返回 { method,host,port,httpVersion}
-* 如果是 GET/POST 方法，那么返回 { metod,host,port,path,httpVersion}
-*/
+ * 从请求头部取得请求详细信息
+ * 如果是 CONNECT 方法，那么会返回 { method,host,port,httpVersion}
+ * 如果是 GET/POST 方法，那么返回 { metod,host,port,path,httpVersion}
+ */
 function parse_request (buffer) {
-   let s = buffer.toString('utf8');
-   let method = s.split('\n')[0].match(/^([A-Z]+)\s/)[1];
-   if (method == 'CONNECT') {
-       let arr = s.match(/^([A-Z]+)\s([^:\s]+):(\d+)\sHTTP\/(\d.\d)/);
-       if (arr && arr[1] && arr[2] && arr[3] && arr[4])
-           return { method: arr[1], host:arr[2], port:arr[3],httpVersion:arr[4] };
-   } else {
-       let arr = s.match(/^([A-Z]+)\s([^\s]+)\sHTTP\/(\d.\d)/);
-       if (arr && arr[1] && arr[2] && arr[3]) {
-           let host = s.match(/Host:\s+([^\n\s\r]+)/)[1];
-           if (host) {
-               let _p = host.split(':',2);
-               return { method: arr[1], host:_p[0], port:_p[1]?_p[1]:80, path: arr[2],httpVersion:arr[3] };
-           }
-       }
-   }
-   return false;
-}
+    let s = buffer.toString('utf8');
+    let method = s.split('\n')[0].match(/^([A-Z]+)\s/);
+
+    if (!method || method.length < 2) return false;
+    method = method[1];
+    if (method == 'CONNECT') {
+        let arr = s.match(/^([A-Z]+)\s([^:\s]+):(\d+)\sHTTP\/(\d.\d)/);
+        if (arr && arr[1] && arr[2] && arr[3] && arr[4])
+            return { method: arr[1], host:arr[2], port:arr[3],httpVersion:arr[4] };
+    } else {
+        let arr = s.match(/^([A-Z]+)\s([^\s]+)\sHTTP\/(\d.\d)/);
+        if (arr && arr[1] && arr[2] && arr[3]) {
+            let host = s.match(/Host:\s+([^\n\s\r]+)/)[1];
+            if (host) {
+                let _p = host.split(':',2);
+                return { method: arr[1], host:_p[0], port:_p[1]?_p[1]:80, path: arr[2],httpVersion:arr[3] };
+            }
+        }
+    }
+    return false;
+ }
 
 /**
  * [buffer_add description]
