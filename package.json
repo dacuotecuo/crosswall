@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/dacuotecuo/crosswall#readme",
   "dependencies": {
+    "moment": "2.20.1",
     "request": "2.83.0"
   }
 }
